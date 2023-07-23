@@ -1,0 +1,51 @@
+import pandas as pd
+url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/ecoli/ecoli.data'
+df = pd.read_csv(url, header=None, delimiter='\s+',names = ["Sequence Name","mcg","gvh","lip","chg","aac","alm1","alm2","cp_pp"])
+print(df)
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+X = df.iloc[:, 1:-1]  
+y = df.iloc[:, -1]  
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = DecisionTreeClassifier()
+model.fit(X_train, y_train)
+test_pred = model.predict(X_test)
+train_pred = model.predict(X_train)
+test_accuracy = accuracy_score(y_test, test_pred)
+train_accuracy = accuracy_score(y_train,train_pred)
+print("Test verileri doğruluk değeri:", test_accuracy)
+print("Eğitim verileri doğruluk değeri:",train_accuracy)
+from sklearn.metrics import confusion_matrix, recall_score, f1_score,precision_score
+cm = confusion_matrix(y_test, y_pred)
+sensitivity = recall_score(y_test, y_pred, average='weighted')
+f_measure = f1_score(y_test, y_pred, average='weighted')
+precision = precision_score(y_test, y_pred, average='weighted')
+print("Precision değeri:", precision)
+print("Sensitivity değeri:", sensitivity)
+print("F-measure değeri :", f_measure)
+import matplotlib.pyplot as plt
+
+basliklar = ['Precision', 'Sensitivity', 'F-measure']
+degerler = [precision, sensitivity, f_measure]
+
+
+plt.bar(basliklar, degerler)
+plt.xlabel('Metrik')
+plt.ylabel('Değer')
+plt.title('Precision, Sensitivity ve F-measure Değerleri')
+plt.ylim(0, 1)  
+plt.show()
+
+baslik = ['Eğitim', 'Test']
+
+
+deger = [train_accuracy, test_accuracy]
+
+
+plt.plot(baslik, deger, marker='o', linestyle='-', color='b')
+plt.xlabel('Veri Seti')
+plt.ylabel('Doğruluk')
+plt.title('Eğitim ve Test Verileri için Doğruluk Değerleri')
+plt.ylim(0, 1)  
+plt.show()
